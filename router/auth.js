@@ -11,32 +11,9 @@ router.get('/' , (req, res) => {
     res.send(`Server is live here`);
 });
 
-//using promises
-// router.post("/products", (req, res) => {
-
-//     const {name , email , phone_number, city } = req.body;
-
-//     if ( !name , !email , !phone_number , !city) {
-//         return res.status(422).json({ "Error" : "Please fill the form"});
-//     }
-
-//     User.findOne({email : email})
-//         .then((userExist) =>{
-//             if(userExist) {
-//                 return res.status(422).json({ error: "Email already exist" });
-//             }
-
-//             const user = new User({name , email , phone_number, city })
-
-//             user.save().then(() => {
-//                 res.status(201).json({ message: "User registered Successfully"});
-//             }).catch((err) => res.status(500).json({ error: "Failed to Register" }));
-
-//         }).catch(err => { console.log(err); });
-
-// });
-
-// async await
+router.get('/test' , (req, res) => {
+    res.send(`Test success`);
+})
 
 router.post('/products', async (req, res) => {
     const {name, email, phone_number, city} = req.body;
