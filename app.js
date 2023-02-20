@@ -14,7 +14,7 @@ dotenv.config({ path: "./config.env"});
 
 const PORT = process.env.PORT;
 
-const mongodb = require("./mongodb");
+const mongodb = require("./mongoDB");
 mongodb();
 
 app.use(express.json());
