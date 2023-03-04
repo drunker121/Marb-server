@@ -5,10 +5,8 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 app.use(
     cors({
-        origin: 'https://architectinsider.in',
-        methods: ['GET', 'POST', 'OPTIONS'],
-        allowedHeaders: ['Content-Type'],
-        credentials: true,
+        origin: '*',
+        credentials: true
     })
 );
 
