@@ -6,6 +6,8 @@ const cors = require('cors');
 app.use(
     cors({
         origin: 'https://architectinsider.in',
+        methods: ['GET', 'POST', 'OPTIONS'],
+        allowedHeaders: ['Content-Type'],
         credentials: true,
     })
 );
