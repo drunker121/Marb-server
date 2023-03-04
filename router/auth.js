@@ -6,8 +6,10 @@ const jwt = require('jsonwebtoken');
 
 const {User, Contactmessage, Enquiry_Message} = require('../model/userDetails');
 
-const accountSid = process.env.ACCOUNT_SID;
-const authToken = process.env.AUTH_TOKEN;
+// const accountSid = process.env.ACCOUNT_SID;
+const accountSid = 'ACbc760d96dce4b97dbef637fc46c8918f';
+// const authToken = process.env.AUTH_TOKEN;
+const authToken = '486bc9fc6ea6e4b4e9144e24833b79f9';
 const client = require('twilio')(accountSid, authToken);
 
 const JWT_AUTH_TOKEN = process.env.JWT_AUTH_TOKEN;
