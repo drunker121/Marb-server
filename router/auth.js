@@ -16,7 +16,8 @@ const JWT_AUTH_TOKEN = process.env.JWT_AUTH_TOKEN;
 const JWT_REFRESH_TOKEN = process.env.JWT_REFRESH_TOKEN;
 let refreshTokens = [];
 
-const smsKey = process.env.SMS_SECRET_KEY;
+// const smsKey = process.env.SMS_SECRET_KEY;
+const smsKey = 'e0ea6d1d2c84b03f5b073656da2ae10f44c7a0ad3519c13781fb63945d61f9154e090f6374ab703bb3048bfc6456816744636489d44659703fdfc68495f6b763';
 
 router.get('/' , (req, res) => {
     res.send(`Server is live here`);
