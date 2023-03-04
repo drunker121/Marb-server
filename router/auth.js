@@ -1,11 +1,20 @@
 const express = require('express');
 const router = express.Router();
-
+const dotenv = require('dotenv');
+const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
 
 const {User, Contactmessage, Enquiry_Message} = require('../model/userDetails');
-// router.get('/products' , (req, res) => {
-//     res.send(`Give me registration details`);
-// });
+
+const accountSid = process.env.ACCOUNT_SID;
+const authToken = process.env.AUTH_TOKEN;
+const client = require('twilio')(accountSid, authToken);
+
+const JWT_AUTH_TOKEN = process.env.JWT_AUTH_TOKEN;
+const JWT_REFRESH_TOKEN = process.env.JWT_REFRESH_TOKEN;
+let refreshTokens = [];
+
+const smsKey = process.env.SMS_SECRET_KEY;
 
 router.get('/' , (req, res) => {
     res.send(`Server is live here`);
@@ -42,16 +51,16 @@ router.post('/products', async (req, res) => {
 
 
 router.post('/login' , async (req, res) => {
-    const {email , phone_number} = req.body;
+    const { phone_number} = req.body;
     
-    if ( !email || !phone_number ) {
-        return res.status(422).json({error: "Please fill the entries"});
+    if ( !phone_number ) {
+        return res.status(422).json({error: "Please Enter you phone number"});
     }
     
     try {
-        const alreadyUser = await User.findOne({email: email});
+        const alreadyUser = await User.findOne({phone_number: phone_number});
         if ( alreadyUser ) {
-            return res.status(202).json({ status: "Log In Successful" });
+            return res.status(202).json({ status: "User found" });
         }
         else{
             return res.status(202).json({ status: "User not found"});
@@ -61,6 +70,99 @@ router.post('/login' , async (req, res) => {
         console.log(err);
     }
 });
+
+router.post('/sendotp' , async(req, res) => {
+    const { phone_number } = req.body;
+    const phone = +91 + phone_number;
+    const otp = Math.floor(100000 + Math.random()*900000);
+    const ttl = 2*60*1000;
+    const expires = Date.now() + ttl;
+    const data = `${phone}.${otp}.${expires}`;
+    const hash = crypto.createHmac('sha256' , smsKey).update(data).digest('hex');
+    const fullHash = `${hash}.${expires}`;
+
+    client.messages.create({
+        body: `Your one time Log In Password for MarbleGram is ${otp}`,
+        from: +12706370017,
+        to: phone
+    }).then((messages) => console.log(messages)).catch((err) => console.error(err));
+
+    res.status(202).send({message : "OTP sent successfully" , phone, hash:fullHash, otp })
+})
+
+router.post('/verifyotp' , async(req, res) => {
+    const phone = req.body.phone;
+    const hash = req.body.hash;
+    const otp = req.body.otp;
+    let [ hashValue, expires ] = hash.split('.');
+
+    let now = Date.now();
+    if ( now > parseInt(expires)) {
+        return res.status(504).send({msg: "Timeout Please try again" })
+    }
+    const data = `${phone}.${otp}.${expires}`;
+    const newCalculatedHash = crypto.createHmac('sha256', smsKey).update(data).digest('hex');
+
+    if ( newCalculatedHash === hashValue ) {
+        const accessToken = jwt.sign( { data: phone} , JWT_AUTH_TOKEN, { expiresIn: '1h' });
+        const refreshToken = jwt.sign( { data: phone} , JWT_REFRESH_TOKEN, { expiresIn: '1d' });
+        // refreshTokens.push(refreshToken);
+        // console.log(refreshToken, refreshTokens , "push hua ?");
+
+        res
+        .status(202)
+        .cookie( 'accessToken' , accessToken, { expires : new Date(new Date().getTime() + 30 *1000), sameSite: 'strict' , httpOnly: true })
+        .cookie( 'authSession', true, { expires: new Date(new Date().getTime() +30 *1000) })
+        .cookie( 'refreshToken' , refreshToken,  { expires : new Date(new Date().getTime() + 3557600000), sameSite: 'strict', httpOnly: true})
+        .cookie( 'refreshTokenID', true, { expires: new Date(new Date().getTime() + 3557600000) })
+        .send({ msg: "Device Confirmed" })
+    }
+    else {
+        return res.status(400).send({ verification: false, msg: "Incorrect OTP" })
+    }
+ })
+
+ async function authenticateUser( req , res , next ) {
+    const accessToken = req.cookies.accessToken;
+
+    jwt.verify( accessToken, JWT_AUTH_TOKEN, async(err, phone) => {
+        if ( phone ) {
+            req.phone = phone;
+            next();
+        } else if ( err.message === "TokenExpiredError") {
+            return res.send(403).send({ success: false, msg: `Access Token Expired` });
+        } else {
+            console.error(err);
+            res.status(403).send({ err, msg: "User not authenticated" })
+        }
+    })
+ }
+
+ router.post( '/refresh', (req, res) => {
+    const refreshToken = req.cookies.refreshToken;
+    // console.log(refreshToken , "opbolte");
+    // console.log(refreshTokens , 'opbolte[]');
+    if ( !refreshToken ) return res.status(403).send({ msg: 'refresh Token not found, Please Log In again' });
+    // if ( !refreshTokens.includes(refreshToken) ) return res.status(403).send({ msg: 'Refresh Token blocked, Log In again' });
+
+    jwt.verify(refreshToken, JWT_REFRESH_TOKEN, (err, phone) => {
+        if ( !err ) {
+            const accessToken = jwt.sign({ data: phone }, JWT_AUTH_TOKEN, { expiresIn: '1d' });
+            res
+            .status(202)
+            .cookie( 'accessToken' , accessToken, { expires : new Date(new Date().getTime() + 30 *1000), sameSite: 'strict' , httpOnly: true })
+            .cookie( 'authSession', true, { expires: new Date(new Date().getTime() +30 *1000) })
+            .send({ previousSessionExpiry: true, success: true })
+        } else {
+            return res.status(403).send({ success: false, msg: 'Invalid Refresh Token' });
+        } 
+    })
+
+ })
+
+ router.post( '/logout', (req, res) => {
+    res.clearCookie('refreshToken').clearCookie('accessToken').clearCookie('authSession').clearCookie('refreshTokenID').send('User Logged Out');
+ })
 
 router.post('/contactus' , async(req, res) => {
     const {name, email, phone_number, query} = req.body;
