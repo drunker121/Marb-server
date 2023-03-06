@@ -120,7 +120,7 @@ router.post('/verifyotp' , async(req, res) => {
 
         res
         .status(202)
-        .cookie( 'accessToken' , accessToken, { expires : new Date(new Date().getTime() + 30 *1000) , httpOnly: true })
+        .cookie( 'accessToken' , accessToken, { expires : new Date(new Date().getTime() + 30 *1000) ,sameSite: 'lax', httpOnly: true })
         .cookie( 'authSession', true, { expires: new Date(new Date().getTime() +30 *1000) })
         .cookie( 'refreshToken' , refreshToken,  { expires : new Date(new Date().getTime() + 3557600000), httpOnly: true})
         .cookie( 'refreshTokenID', true, { expires: new Date(new Date().getTime() + 3557600000) })
