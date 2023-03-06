@@ -115,7 +115,7 @@ router.post('/verifyotp' , async(req, res) => {
         const accessToken = jwt.sign( { data: phone} , JWT_AUTH_TOKEN, { expiresIn: '1h' });
         const refreshToken = jwt.sign( { data: phone} , JWT_REFRESH_TOKEN, { expiresIn: '1d' });
         // refreshTokens.push(refreshToken);
-        // console.log(refreshToken, refreshTokens , "push hua ?");
+        console.log(refreshToken, accessToken , "push hua ?");
 
         res
         .status(202)
