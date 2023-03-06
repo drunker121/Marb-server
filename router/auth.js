@@ -4,6 +4,9 @@ const dotenv = require('dotenv');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 
+require("dotenv").config();
+dotenv.config({ path: "./config.env"});
+
 const {User, Contactmessage, Enquiry_Message} = require('../model/userDetails');
 
 // const accountSid = process.env.ACCOUNT_SID;
@@ -12,10 +15,10 @@ const accountSid = 'ACbc760d96dce4b97dbef637fc46c8918f';
 const authToken = '486bc9fc6ea6e4b4e9144e24833b79f9';
 const client = require('twilio')(accountSid, authToken);
 
-// const JWT_AUTH_TOKEN = process.env.JWT_AUTH_TOKEN;
-const JWT_AUTH_TOKEN = 'aec8a58af1e2268a288e9f2328682f8f4f168e224d2fbf03546c496a9988d9abe19ee56d5222e3a12ae0d67db599168b31e17467bf0c57a5ffff6864f5906e3d';
-// const JWT_REFRESH_TOKEN = process.env.JWT_REFRESH_TOKEN;
-const JWT_REFRESH_TOKEN = '524039eb5a4dc5cdf267f35c46dcb8f009abaee7ac37e72244df7f9291a01e47fc0fa9906f015609b0e5cf53f935a73ba4c77f248ef1bda01f784504ae777541';
+const JWT_AUTH_TOKEN = process.env.JWT_AUTH_TOKEN;
+// const JWT_AUTH_TOKEN = 'aec8a58af1e2268a288e9f2328682f8f4f168e224d2fbf03546c496a9988d9abe19ee56d5222e3a12ae0d67db599168b31e17467bf0c57a5ffff6864f5906e3d';
+const JWT_REFRESH_TOKEN = process.env.JWT_REFRESH_TOKEN;
+// const JWT_REFRESH_TOKEN = '524039eb5a4dc5cdf267f35c46dcb8f009abaee7ac37e72244df7f9291a01e47fc0fa9906f015609b0e5cf53f935a73ba4c77f248ef1bda01f784504ae777541';
 let refreshTokens = [];
 
 // const smsKey = process.env.SMS_SECRET_KEY;
