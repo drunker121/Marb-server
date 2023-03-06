@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 
 require("dotenv").config();
-dotenv.config({ path: "./config.env"});
+dotenv.config({ path: "../config.env"});
 
 const {User, Contactmessage, Enquiry_Message} = require('../model/userDetails');
 
