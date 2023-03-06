@@ -112,10 +112,11 @@ router.post('/verifyotp' , async(req, res) => {
     const newCalculatedHash = crypto.createHmac('sha256', smsKey).update(data).digest('hex');
 
     if ( newCalculatedHash === hashValue ) {
+        console.log('hi');
         const accessToken = jwt.sign( { data: phone} , JWT_AUTH_TOKEN, { expiresIn: '1h' });
         const refreshToken = jwt.sign( { data: phone} , JWT_REFRESH_TOKEN, { expiresIn: '1d' });
         // refreshTokens.push(refreshToken);
-        console.log(refreshToken, accessToken , "push hua ?");
+        // console.log(refreshToken, accessToken , "push hua ?");
 
         res
         .status(202)
