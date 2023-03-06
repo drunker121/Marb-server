@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 app.use(
     cors({
-        // origin: ['https://architectinsider.in', 'http://localhost:3000'],
+        origin: ['https://architectinsider.in', 'http://localhost:3000'],
         credentials: true,
         withCredentials: true
     })
