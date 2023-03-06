@@ -6,7 +6,7 @@ const cors = require('cors');
 app.use(
     cors({
         origin: ['https://architectinsider.in', 'http://localhost:3000'],
-        // credentials: true,
+        credentials: true,
         withCredentials: true
     })
 );
