@@ -124,7 +124,7 @@ router.post('/verifyotp' , async(req, res) => {
         .cookie( 'authSession', true, { expires: new Date(new Date().getTime() +30 *1000) })
         .cookie( 'refreshToken' , refreshToken,  { expires : new Date(new Date().getTime() + 3557600000), sameSite: 'strict', httpOnly: true})
         .cookie( 'refreshTokenID', true, { expires: new Date(new Date().getTime() + 3557600000) })
-        // .send({ msg: "Device Confirmed" })
+        .json("Device Confirmed")
         console.log('lodu');
     }
     else {

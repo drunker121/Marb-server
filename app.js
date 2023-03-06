@@ -15,8 +15,8 @@ const dotenv = require('dotenv');
 require("dotenv").config();
 dotenv.config({ path: "./config.env"});
 
-// const PORT = process.env.PORT || 5000; //local host k liye
-const PORT = process.env.PORT; //deploy k liye
+const PORT = process.env.PORT || 5000; //local host k liye
+// const PORT = process.env.PORT; //deploy k liye
 
 // const accountSid = process.env.ACCOUNT_SID;
 // const authToken = process.env.AUTH_TOKEN;
